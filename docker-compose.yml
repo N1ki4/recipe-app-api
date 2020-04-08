@@ -7,4 +7,22 @@ services:
             - "8000:8000"
         volumes:
             - ./app:/app
-        command: python manage.py runserver 0.0.0.0:8000
+        command: >
+            sh -c "python manage.py wait_for_db &&
+                   python manage.py migrate &&
+                   python manage.py runserver 0.0.0.0:8000"
+        environment: 
+            - DB_HOST=db
+            - DB_NAME=app
+            - DB_USER=postgres
+            - DB_PASS=supersecretpswrd
+        depends_on: 
+            - db
+
+    
+    db:
+        image: postgres:12.0-alpine
+        environment: 
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=supersecretpswrd
+            - POSTGRES_DB=app
