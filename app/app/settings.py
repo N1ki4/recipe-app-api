@@ -37,9 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
+    # 3rd paty packages
+    'rest_framework',
+    'rest_framework.authtoken',
+
     # custom
     'core',
+    'user',
 ]
 
 MIDDLEWARE = [
