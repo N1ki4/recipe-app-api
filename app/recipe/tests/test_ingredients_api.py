@@ -31,7 +31,6 @@ class PrivateIngredientsApiTests(TestCase):
         self.user = get_user_model().objects.create_user(
             'test@nikita.ua',
             'testpswrd'
-
         )
         self.client.force_authenticate(self.user)
     
