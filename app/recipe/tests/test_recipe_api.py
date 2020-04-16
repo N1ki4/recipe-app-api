@@ -220,3 +220,41 @@ class RecipeImageUploadTests(TestCase):
         resp = self.client.post(url, {'image': 'notimage'}, format='multipart')
 
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_filter_recipes_by_tags(self):
+        recipe1 = create_sample_recipe(user=self.user, title="Thai vegetable curry")
+        recipe2 = create_sample_recipe(user=self.user, title="Aubergine with tahini")
+        tag1 = create_sample_tag(user=self.user, name='Vegan')
+        tag2 = create_sample_tag(user=self.user, name='Vegetarian')
+        recipe1.tags.add(tag1)
+        recipe2.tags.add(tag2)
+        recipe3 = create_sample_recipe(user=self.user, title="Fish and chips")
+        
+        resp = self.client.get(
+            RECIPES_URL,
+            {'tags': f'{tag1.id}, {tag2.id}'}
+        )
+        serializer1 = RecipeSerializer(recipe1)
+        serializer2 = RecipeSerializer(recipe2)
+        serializer3 = RecipeSerializer(recipe3)
+        self.assertIn(serializer1.data, resp.data)
+        self.assertIn(serializer2.data, resp.data)
+
+    def test_filter_recipes_by_ingredients(self):
+        recipe1 = create_sample_recipe(user=self.user, title="Posh beans on toast")
+        recipe2 = create_sample_recipe(user=self.user, title="Chicken cacciatore")
+        ingredient1 = create_sample_ingredient(user=self.user, name='Feta cheese')
+        ingredient2 = create_sample_ingredient(user=self.user, name='Chicken')
+        recipe1.ingredients.add(ingredient1)
+        recipe2.ingredients.add(ingredient2)
+        recipe3 = create_sample_recipe(user=self.user, title='Steak with mushrooms')
+
+        resp = self.client.get(
+            RECIPES_URL,
+            {'ingredients': f'{ingredient1.id},{ingredient2.id}'}
+        )
+        serializer1 = RecipeSerializer(recipe1)
+        serializer2 = RecipeSerializer(recipe2)
+        serializer3 = RecipeSerializer(recipe3)
+        self.assertIn(serializer1.data, resp.data)
+        self.assertIn(serializer2.data, resp.data)        
